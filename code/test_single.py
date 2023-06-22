@@ -24,192 +24,184 @@ from tea_pymoo.callbacks.accumulated_callback import AccumulateCallbacks
 from problems.Sphere import Sphere
 
 
-inds_optimal_and_worst = np.array([
+#set the random seed!
+np.random.seed(1)
+    
+def get_fitness(problem, ind):
+    return problem.evaluate([ind])[0,0]
+def get_percentage_optimal_genes(problem, ind):
+    return np.sum(ind == problem._calc_pareto_set()) / problem.n_var
+
+#define the seed individuals:
+inds_d4 = np.array([
     #the optimal individual:
     [0,0,0,0],
     #the (fitness wise) nadir point:
     [5,5,5,5],
-])
-# inds_f25 = np.array([#fitness 25: #this is essentially never chosen, as the worst fitness of the pop is already lower then 16
-# [5,0,0,0],
-# [np.sqrt(25/2),np.sqrt(25/2),0,0],
-# [np.sqrt(25/3),np.sqrt(25/3),np.sqrt(25/3),0],
-# [np.sqrt(25/4),np.sqrt(25/4),np.sqrt(25/4),np.sqrt(25/4)],
-# ])
-inds_f16 = np.array([#fitness 16:
+    
+    #fitness 16:
     [4,0,0,0],
     [np.sqrt(16/2),np.sqrt(16/2),0,0],
     [np.sqrt(16/3),np.sqrt(16/3),np.sqrt(16/3),0],
     [np.sqrt(16/4),np.sqrt(16/4),np.sqrt(16/4),np.sqrt(16/4)],
-])
-inds_f9 = np.array([#fitness 9:
+
+    #fitness 9:
     [3,0,0,0],
     [np.sqrt(9/2),np.sqrt(9/2),0,0],
     [np.sqrt(9/3),np.sqrt(9/3),np.sqrt(9/3),0],
     [np.sqrt(9/4),np.sqrt(9/4),np.sqrt(9/4),np.sqrt(9/4)],
-])
-inds_f4 = np.array([#fitness 4:
+
+    #fitness 4:
     [2,0,0,0],
-    [np.sqrt(2/2),np.sqrt(2/2),0,0],
-    [np.sqrt(2/3),np.sqrt(2/3),np.sqrt(2/3),0],
-    [np.sqrt(2/4),np.sqrt(2/4),np.sqrt(2/4),np.sqrt(2/4)],
-])
-inds_f1 = np.array([#fitness 1:
+    [np.sqrt(4/2),np.sqrt(4/2),0,0],
+    [np.sqrt(4/3),np.sqrt(4/3),np.sqrt(4/3),0],
+    [np.sqrt(4/4),np.sqrt(4/4),np.sqrt(4/4),np.sqrt(4/4)],
+
+    #fitness 1:
     [1,0,0,0],
     [np.sqrt(1/2),np.sqrt(1/2),0,0],
     [np.sqrt(1/3),np.sqrt(1/3),np.sqrt(1/3),0],
     [np.sqrt(1/4),np.sqrt(1/4),np.sqrt(1/4),np.sqrt(1/4)],
 ])
 
-print("dist f9, seed_type0", np.linalg.norm(inds_f9[0]-inds_optimal_and_worst[0]))
-print("dist f9, seed_type1", np.linalg.norm(inds_f9[1]-inds_optimal_and_worst[0]))
-print("dist f9, seed_type2", np.linalg.norm(inds_f9[2]-inds_optimal_and_worst[0]))
-print("dist f9, seed_type3", np.linalg.norm(inds_f9[3]-inds_optimal_and_worst[0]))
+inds_d8 = np.array([
+    #the optimal individual:
+    [0,0,0,0,0,0,0,0],
+    #the (fitness wise) nadir point:
+    [5,5,5,5,5,5,5,5],
+    
+    #fitness 16:
+    [np.sqrt(16/2),np.sqrt(16/2),0,0,0,0,0,0],
+    [np.sqrt(16/4),np.sqrt(16/4),np.sqrt(16/4),np.sqrt(16/4),0,0,0,0],
+    [np.sqrt(16/6),np.sqrt(16/6),np.sqrt(16/6),np.sqrt(16/6),np.sqrt(16/6),np.sqrt(16/6),0,0],
+    [np.sqrt(16/8),np.sqrt(16/8),np.sqrt(16/8),np.sqrt(16/8),np.sqrt(16/8),np.sqrt(16/8),np.sqrt(16/8),np.sqrt(16/8)],
 
-output_filename = "test.csv"
-#set the random seed!
-np.random.seed(1)
+    #fitness 9:
+    [np.sqrt(9/2),np.sqrt(9/2),0,0,0,0,0,0],
+    [np.sqrt(9/4),np.sqrt(9/4),np.sqrt(9/4),np.sqrt(9/4),0,0,0,0],
+    [np.sqrt(9/6),np.sqrt(9/6),np.sqrt(9/6),np.sqrt(9/6),np.sqrt(9/6),np.sqrt(9/6),0,0],
+    [np.sqrt(9/8),np.sqrt(9/8),np.sqrt(9/8),np.sqrt(9/8),np.sqrt(9/8),np.sqrt(9/8),np.sqrt(9/8),np.sqrt(9/8)],
 
-#set up the algorithmic parameters:
+    #fitness 4:
+    [np.sqrt(4/2),np.sqrt(4/2),0,0,0,0,0,0],
+    [np.sqrt(4/4),np.sqrt(4/4),np.sqrt(4/4),np.sqrt(4/4),0,0,0,0],
+    [np.sqrt(4/6),np.sqrt(4/6),np.sqrt(4/6),np.sqrt(4/6),np.sqrt(4/6),np.sqrt(4/6),0,0],
+    [np.sqrt(4/8),np.sqrt(4/8),np.sqrt(4/8),np.sqrt(4/8),np.sqrt(4/8),np.sqrt(4/8),np.sqrt(4/8),np.sqrt(4/8)],
+
+    #fitness 1:
+    [np.sqrt(1/2),np.sqrt(1/2),0,0,0,0,0,0],
+    [np.sqrt(1/4),np.sqrt(1/4),np.sqrt(1/4),np.sqrt(1/4),0,0,0,0],
+    [np.sqrt(1/6),np.sqrt(1/6),np.sqrt(1/6),np.sqrt(1/6),np.sqrt(1/6),np.sqrt(1/6),0,0],
+    [np.sqrt(1/8),np.sqrt(1/8),np.sqrt(1/8),np.sqrt(1/8),np.sqrt(1/8),np.sqrt(1/8),np.sqrt(1/8),np.sqrt(1/8)],
+])
+
+inds_d12 = np.array([
+    #the optimal individual:
+    [0,0,0,0,0,0,0,0,0,0,0,0],
+    #the (fitness wise) nadir point:
+    [5,5,5,5,5,5,5,5,5,5,5,5],
+    
+    #fitness 16:
+    [np.sqrt(16/3),np.sqrt(16/3),np.sqrt(16/3),0,0,0,0,0,0,0,0,0],
+    [np.sqrt(16/6),np.sqrt(16/6),np.sqrt(16/6),np.sqrt(16/6),np.sqrt(16/6),np.sqrt(16/6),0,0,0,0,0,0],
+    [np.sqrt(16/9),np.sqrt(16/9),np.sqrt(16/9),np.sqrt(16/9),np.sqrt(16/9),np.sqrt(16/9),np.sqrt(16/9),np.sqrt(16/9),np.sqrt(16/9),0,0,0],
+    [np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12),np.sqrt(16/12)],
+
+    #fitness 9:
+    [np.sqrt(9/3),np.sqrt(9/3),np.sqrt(9/3),0,0,0,0,0,0,0,0,0],
+    [np.sqrt(9/6),np.sqrt(9/6),np.sqrt(9/6),np.sqrt(9/6),np.sqrt(9/6),np.sqrt(9/6),0,0,0,0,0,0],
+    [np.sqrt(9/9),np.sqrt(9/9),np.sqrt(9/9),np.sqrt(9/9),np.sqrt(9/9),np.sqrt(9/9),np.sqrt(9/9),np.sqrt(9/9),np.sqrt(9/9),0,0,0],
+    [np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12),np.sqrt(9/12)],
+
+    #fitness 4:
+    [np.sqrt(4/3),np.sqrt(4/3),np.sqrt(4/3),0,0,0,0,0,0,0,0,0],
+    [np.sqrt(4/6),np.sqrt(4/6),np.sqrt(4/6),np.sqrt(4/6),np.sqrt(4/6),np.sqrt(4/6),0,0,0,0,0,0],
+    [np.sqrt(4/9),np.sqrt(4/9),np.sqrt(4/9),np.sqrt(4/9),np.sqrt(4/9),np.sqrt(4/9),np.sqrt(4/9),np.sqrt(4/9),np.sqrt(4/9),0,0,0],
+    [np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12),np.sqrt(4/12)],
+
+    #fitness 1:
+    [np.sqrt(1/3),np.sqrt(1/3),np.sqrt(1/3),0,0,0,0,0,0,0,0,0],
+    [np.sqrt(1/6),np.sqrt(1/6),np.sqrt(1/6),np.sqrt(1/6),np.sqrt(1/6),np.sqrt(1/6),0,0,0,0,0,0],
+    [np.sqrt(1/9),np.sqrt(1/9),np.sqrt(1/9),np.sqrt(1/9),np.sqrt(1/9),np.sqrt(1/9),np.sqrt(1/9),np.sqrt(1/9),np.sqrt(1/9),0,0,0],
+    [np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12),np.sqrt(1/12)],
+])
+
+
 n_gen=50
 pop_size = 20
-problem = Sphere(n_var = 4)
+
 tracing_type = TracingTypes.TRACE_VECTOR
 t_sampling = T_Sampling(sampling=FloatRandomSampling(), tracing_type=tracing_type)
-t_crossover_combining = T_Crossover(crossover=SimulatedBinaryCrossover(prob=1.0, eta=20), tracing_type=tracing_type)
-t_crossover_copying = T_Crossover(crossover=UniformCrossover(), tracing_type=tracing_type)
-t_mutation = T_Mutation(mutation=PolynomialMutation(prob=1.0/problem.n_var, eta=20), tracing_type=tracing_type, accumulate_mutations=True)
 
 
 
-problem_d4 = Sphere(n_var = 4)
-random_inds_d4 = t_sampling.do(problem_d4, pop_size - 1).get("X") / 2 
-problem_d8 = Sphere(n_var = 8)
-random_inds_d8 = t_sampling.do(problem_d8, pop_size - 1).get("X") / 2.95
-problem_d12 = Sphere(n_var = 12)
-random_inds_d12 = t_sampling.do(problem_d12, pop_size - 1).get("X") / 3.3
+problems = {
+        4 : Sphere(n_var = 4),
+        8 : Sphere(n_var = 8),
+        12 : Sphere(n_var = 12)
+    }
 
-print("d4 ", problem_d4.evaluate(random_inds_d4).max(), problem_d4.evaluate(random_inds_d4).mean(), problem_d4.evaluate(random_inds_d4).min())
-print("d8 ",problem_d8.evaluate(random_inds_d8).max(),  problem_d8.evaluate(random_inds_d8).mean(), problem_d8.evaluate(random_inds_d8).min())
-print("d12", problem_d12.evaluate(random_inds_d12).max(), problem_d12.evaluate(random_inds_d12).mean(), problem_d12.evaluate(random_inds_d12).min())
+random_inds_d4 = t_sampling.do(problems[4], pop_size - 1).get("X") / 2 
+random_inds_d8 = t_sampling.do(problems[8], pop_size - 1).get("X") / 2.95
+random_inds_d12 = t_sampling.do(problems[12], pop_size - 1).get("X") / 3.3
 
-exit()
+crossovers = {
+        "combining" : T_Crossover(crossover=SimulatedBinaryCrossover(prob=1.0, eta=20), tracing_type=tracing_type),
+        "copying" : T_Crossover(crossover=UniformCrossover(), tracing_type=tracing_type)
+    }
+seed_individuals = {
+    4 : inds_d4,
+    8 : inds_d8,
+    12 : inds_d12
+}
+random_populations = {
+    4 : random_inds_d4,
+    8 : random_inds_d8,
+    12 : random_inds_d12
+}
 
-def get_callback(n_var, initial_popsize, tracing_type, additional_run_info=None):
-    '''
-    Sets up and returns the callback for the test.
+for dim in problems:
+    problem=problems[dim]
+    for crossover_name in crossovers.keys():
+        for seed_individual in seed_individuals[dim]:
+            seed_fitness = get_fitness(problem, seed_individual)
+            percentage_of_optimal_genes = get_percentage_optimal_genes(problem, seed_individual)
+            print("processing dim:", dim," fitness:", round(seed_fitness)," optimal genes:", percentage_of_optimal_genes," crossover:", crossover_name)
 
-    [0] = counting_impact
-    [1] = so_fitness
+            pop_X = np.concatenate(([seed_individual], random_populations[dim]), axis=0)
+            pop = t_sampling.do(problem, pop_size, seeds=pop_X)
 
-    Parameters:
-    -----------
-    initial_popsize : int
-        The size of the initial population.
-    tracing_type : TraceType
-        The tracing implementation used.
-    additional_keys : dict
-        A dictionary of additional keys used for logging the data.
-    Returns:
-    --------
-    callback : tea_pymoo.callback.accumulated_callback
-        The callback for the tests.
-    '''
-    callbacks = [
-            Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = initial_popsize, tracing_type=tracing_type),
-            Performance_Callback(additional_run_info=additional_run_info),
-            Fitness_Callback(additional_run_info=additional_run_info),
-            Genome_Callback(n_var = n_var, additional_run_info=additional_run_info)
+            algorithm = GA(
+                pop_size=pop_size,
+                sampling=pop,
+                crossover=crossovers[crossover_name],
+                mutation=T_Mutation(mutation=PolynomialMutation(prob=1.0/problem.n_var, eta=20), tracing_type=tracing_type, accumulate_mutations=True)
+                )
 
-        ]
-    callback = AccumulateCallbacks(collectors=callbacks)
-    return callback
+            for i in range(31):#31 re-runs as usual
+                #set up callbacks:
+                additional_run_info = {
+                    "run_number": i,
+                    "seed_fitness": round(seed_fitness),
+                    "percentage_of_optimal_genes": percentage_of_optimal_genes,
+                    "crossover_type": crossover_name,
+                    "dim": dim
+                    }
+                callbacks = [
+                Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type),
+                Performance_Callback(additional_run_info=additional_run_info),
+                Fitness_Callback(additional_run_info=additional_run_info),
+                #Genome_Callback(n_var = problem.n_var, additional_run_info=additional_run_info, filename="genome_"+str(dim)) #genome information would need to be saved separately for each dimension!
+                ]
+                callback = AccumulateCallbacks(collectors=callbacks)
 
-def run_single_conf(seed, seed_fitness, seed_type, random_inds):
-    '''
-    generates the runs for one single seed.
-
-    Parameters:
-    -----------
-    seed : np.array
-        The seed for which to generate the test.
-    seed_fitness : float
-        The fitness of the seed.
-    seed_type : int
-        The type of the seed / the genome structure of the seed.
-    random_inds : np.array
-        The rest of the population for the test.
-    '''
-
-    print("processing seed with fitness", seed_fitness,"and type", seed_type)
-
-    pop_X = np.concatenate(([seed], random_inds), axis=0)
-    pop = t_sampling.do(problem, pop_size, seeds=pop_X)
-
-
-    copy_algorithm = GA(#with copying crossover
-        pop_size=pop_size,
-        sampling=pop,
-        crossover=t_crossover_copying,
-        mutation=t_mutation,
-        )
-    combining_algorithm = GA(#with combining crossover
-        pop_size=pop_size,
-        sampling=pop,
-        crossover=t_crossover_combining,
-        mutation=t_mutation,
-        )
-
-    for i in range(31):
-
-        #the copying crossover:
-        additional_keys = {
-            "run_number": i,
-            "seed_fitness": seed_fitness,
-            "seed_type": seed_type,
-            "crossover_type": "copy"
-            }
-        callback = get_callback(problem.n_var, pop_size, tracing_type, additional_keys)
-        res = minimize(problem,
-                    copy_algorithm,
-                    ('n_gen', n_gen),
-                    seed=i,
-                    verbose=False,
-                    callback=callback)
-        callback.finalize("test_out")
-        #save_data_to_file(callback, seed_fitness, seed_type)
-
-        #the combining crossover:
-        additional_keys["crossover_type"] = "combine"
-        callback = get_callback(problem.n_var, pop_size, tracing_type, additional_keys)
-        res = minimize(problem,
-                    combining_algorithm,
-                    ('n_gen', n_gen),
-                    seed=i,
-                    verbose=False,
-                    callback=callback)
-        callback.finalize("test_out")
-        #save_data_to_file(callback, seed_fitness, seed_type)
-        
-
-#actually run the tests:
-random_inds = t_sampling.do(problem, pop_size - 1).get("X") / 2 #generate the other inds here to keep them equal. Fitness values between -2.5 to 2.5 to match the fitness of the seed individuals better!
-
-for i in range(len(inds_f1)):
-    run_single_conf(seed=inds_f1[i],seed_fitness=1,seed_type=i,random_inds=random_inds)
-for i in range(len(inds_f4)):
-    run_single_conf(seed=inds_f4[i],seed_fitness=4,seed_type=i,random_inds=random_inds)
-for i in range(len(inds_f9)):
-    run_single_conf(seed=inds_f9[i],seed_fitness=9,seed_type=i,random_inds=random_inds)
-for i in range(len(inds_f16)):
-    run_single_conf(seed=inds_f16[i],seed_fitness=16,seed_type=i,random_inds=random_inds)
-# for i in range(len(inds_f25)):
-#     run_single_conf(seed=inds_f25[i],seed_fitness=25,seed_type=i,random_inds=random_inds)
-
-run_single_conf(seed=inds_optimal_and_worst[0],seed_fitness=0,seed_type=-1,random_inds=random_inds)
-run_single_conf(seed=inds_optimal_and_worst[1],seed_fitness=100,seed_type=-1,random_inds=random_inds)
-
-
-
-
-
+                #run the test
+                res = minimize(problem,
+                            algorithm,
+                            ('n_gen', n_gen),
+                            seed=i,
+                            verbose=False,
+                            callback=callback)
+                
+                #print output:
+                callback.finalize("test_out")
