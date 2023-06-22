@@ -16,4 +16,4 @@ class Sphere(Problem):
         return 0.0
 
     def _calc_pareto_set(self):
-        return np.full(self.n_var, 0.5)
+        return np.full(self.n_var, 0.0)
