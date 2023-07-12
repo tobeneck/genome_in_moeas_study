@@ -162,5 +162,5 @@ code/test_out/*
 #.idea/
 
 #ignore the test output:
-code/first_test_data/*
+code/preliminary_test_data/*
 code/sphere_function_data_out/*
