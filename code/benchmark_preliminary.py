@@ -1,13 +1,9 @@
 '''
-This is the first test file, which was not used in the paper
-
-#TODO: what did we test?
+This file only contains the first preliminary tests used to explore the data.
+For the actual benchmarks used look into "benchmark_sphere.py".
 '''
 
 import numpy as np
-import pandas as pd
-
-from os.path import exists
 
 from pymoo.algorithms.soo.nonconvex.ga import GA
 from pymoo.optimize import minimize
@@ -37,6 +33,14 @@ def get_fitness(problem, ind):
     return problem.evaluate([ind])[0,0]
 def get_percentage_optimal_genes(problem, ind):
     return np.sum(ind == problem._calc_pareto_set()) / problem.n_var
+
+
+def generate_seed_individuals(n_var, initial_pop):
+    '''
+    Generates a numpy vector of seed individuals based on the number of 
+    '''
+    seed_individuals = np.zeros()
+    return Null
 
 #define the seed individuals:
 inds_d4 = np.array([
