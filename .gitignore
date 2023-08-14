@@ -161,6 +161,7 @@ code/test_out/*
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-#ignore the test output:
-code/preliminary_test_data/*
-code/sphere_function_data_out/*
+#ignore the csv data
+***.csv
+
+**DS_Store
