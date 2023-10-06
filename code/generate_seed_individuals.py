@@ -104,27 +104,9 @@ def generate_individuals(problem: Problem, percentage_of_optimal_genes: float, f
     Returns a numpy array of individuals.
     '''
     genome_values = calculate_non_optimal_genome_values(problem, percentage_of_optimal_genes, fitness_target)
-    print(genome_values)
     whole_individuals = [ generate_so_genome(non_optimal_gene_value, percentage_of_optimal_genes, problem) for non_optimal_gene_value in genome_values ]
 
     return np.array(whole_individuals)
-
-def select_closest_and_furthest_genome(problem: Problem, individuals: np.array) -> np.array:
-    '''
-    Selects two individuals, the closest to the pareto set and the furthest to the pareto set.
-    Returns an np.array of two individuals.
-    '''
-
-
-    #3. If more than two select the one with the highest and lowest distance to the global optimim
-    if len(genomes) > 2:
-        dists_to_optimim = np.array( [np.linalg.norm( problem._calc_pareto_set()-genome ) for genome in genomes]) #euclidean distance
-        print("dists:", dists_to_optimim)
-        max_dist_index = np.argmax(dists_to_optimim)
-        min_dist_index = np.argmin(dists_to_optimim)
-        genomes = np.array( [genomes[min_dist_index], genomes[max_dist_index]] )
-    #4. return
-    return genomes
 
 def build_dataframe_for_fitness_target(problem:Problem, f_target: float, quality:str, seed_inds_df:pd.DataFrame) -> None:
     '''
@@ -147,13 +129,14 @@ def build_dataframe_for_fitness_target(problem:Problem, f_target: float, quality
             dists_to_optimim = np.array( [np.linalg.norm( problem._calc_pareto_set()-ind ) for ind in individuals]) #euclidean distance
             max_dist_id = np.argmax(dists_to_optimim)
             min_dist_id = np.argmin(dists_to_optimim)
-            seed_inds_df.loc[len(seed_inds_df)+1] =list(individuals[ min_dist_id ]) + [dists_to_optimim[min_dist_id], "close", percentage_of_optimal_genes, quality]
-            seed_inds_df.loc[len(seed_inds_df)+1] =list(individuals[ max_dist_id ]) + [dists_to_optimim[max_dist_id], "far", percentage_of_optimal_genes, quality]
+            f_of_individuals = problem.evaluate(individuals)
+            seed_inds_df.loc[len(seed_inds_df)+1] =list(individuals[ min_dist_id ]) + [dists_to_optimim[min_dist_id], "close", percentage_of_optimal_genes, quality, f_of_individuals[ min_dist_id ][0] ]#0 because single objective
+            seed_inds_df.loc[len(seed_inds_df)+1] =list(individuals[ max_dist_id ]) + [dists_to_optimim[max_dist_id], "far", percentage_of_optimal_genes, quality, f_of_individuals[ max_dist_id ][0] ]
 
 
 def generate_seed_inds_for_problem_and_dim(problem:Problem, problem_name:str, dim:int, random_inds:np.array) -> None:
     '''
-    Generates and saves seed individuals to a csv file
+    Generates and saves seed individuals to a csv file.
     '''
     #fitness gargets:
     f_of_random_inds = problem.evaluate(random_inds)
@@ -163,7 +146,7 @@ def generate_seed_inds_for_problem_and_dim(problem:Problem, problem_name:str, di
     f_upper_quartile = np.quantile(f_of_random_inds, 0.75)
     f_worst = np.max(f_of_random_inds) * 2
 
-    df_columns = ["gene_"+str(i) for i in range(dim)] + ["euclidean distance","close/far","% optimal genes","quality"]
+    df_columns = ["gene_"+str(i) for i in range(dim)] + ["euclidean distance","close/far","% optimal genes","quality","fitness"]
     seed_inds_df = pd.DataFrame(columns=df_columns, dtype=str)
 
     build_dataframe_for_fitness_target(problem, f_best, "best", seed_inds_df)
