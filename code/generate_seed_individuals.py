@@ -10,9 +10,9 @@ import pandas as pd
 from scipy import optimize
 
 from pymoo.core.problem import Problem
-from pymoo.problems.single.rastrigin import Rastrigin
-from pymoo.problems.single.rosenbrock import Rosenbrock
-from pymoo.problems.single.zakharov import Zakharov
+
+from problems.rastrigin import Rastrigin
+from problems.rosenbrock import Rosenbrock
 
 
 # ====================================================================================================
@@ -181,18 +181,21 @@ random_inds_d32 = np.loadtxt(in_path+"/random_inds_d32.csv", delimiter=",", dtyp
 # Generate the seed individuals for the Rastrigin and Rosenbrock Functions
 # ====================================================================================================
 
+xl = -5
+xu = 5
+
 dim = 4
-generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim), "Rastrigin", dim, random_inds_d4)
-generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim), "Rosenbrock", dim, random_inds_d4)
+generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d4)
+generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d4)
 dim = 8
-generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim), "Rastrigin", dim, random_inds_d8)
-generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim), "Rosenbrock", dim, random_inds_d8)
+generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d8)
+generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d8)
 dim = 16
-generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim), "Rastrigin", dim, random_inds_d16)
-generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim), "Rosenbrock", dim, random_inds_d16)
+generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d16)
+generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d16)
 dim = 32
-generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim), "Rastrigin", dim, random_inds_d32)
-generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim), "Rosenbrock", dim, random_inds_d32)
+generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d32)
+generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d32)
 
 
 
