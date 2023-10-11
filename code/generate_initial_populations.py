@@ -13,7 +13,7 @@ if not os.path.exists(out_path):
 np.random.seed(1)
 
 #generate the initial populations
-pop_size = 20 #the overall popsize is 20, but we only need 19 individuals due to the seed! 
+pop_size = 40 #the overall popsize is 20, but we only need 19 individuals due to the seed! 
 
 '''
 NOTE: The same initial population is used for all problems, even though different problems with different upper and lower bounds are used.
@@ -27,4 +27,3 @@ np.savetxt(out_path+"/random_inds_d4.csv", random_inds_d4, delimiter=",")
 np.savetxt(out_path+"/random_inds_d8.csv", random_inds_d8, delimiter=",")
 np.savetxt(out_path+"/random_inds_d16.csv", random_inds_d16, delimiter=",")
 np.savetxt(out_path+"/random_inds_d32.csv", random_inds_d32, delimiter=",")
-
