@@ -3,6 +3,7 @@ This file generates the seed individuals used for the tests with the Sphere, Ras
 '''
 import os
 import math
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -83,7 +84,9 @@ def calculate_non_optimal_genome_values(problem: Problem, percentage_of_optimal_
 
     results = []
     for i in np.linspace(problem.xl[0], problem.xu[0], 101): #TODO: hint that it only works with the same xl and xu for all genes!
-        current_res = optimize.fsolve(func=scipy_optimizable_problem.to_optimize_with_scipy, x0=[i])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            current_res = optimize.fsolve(func=scipy_optimizable_problem.to_optimize_with_scipy, x0=[i])
 
         if math.isclose(a=scipy_optimizable_problem.to_optimize_with_scipy(current_res), b=0.0, abs_tol=0.000000001):#check if the result is generally good enough
             if len(results) > 0: #if we already have found solutions we need to ckeck for duplicates
@@ -113,7 +116,7 @@ def build_dataframe_for_fitness_target(problem:Problem, f_target: float, quality
     This method generates the dataframe for different percentages of optimal genes.
     The results will be saved to the seed_inds_df.
     '''
-    for percentage_of_optimal_genes in [0.0, 0.25, 0.5, 0.75]: #TODO!
+    for percentage_of_optimal_genes in [0.0, 0.25, 0.5, 0.75]: #the four percentages of optimal genes used
         # 1. generate possible individuals
         individuals = generate_individuals(
             problem=problem,
@@ -122,7 +125,7 @@ def build_dataframe_for_fitness_target(problem:Problem, f_target: float, quality
             )
         #2. Skip the configuration if less than two are found
         if len(individuals) < 2:
-            print("Less than two solutions found for this configuration, skipping", percentage_of_optimal_genes,"optimal genes...")
+            print("Less than two solutions found for problem", type(problem).__name__,"in qualiry", quality ,", skipping", percentage_of_optimal_genes,"optimal genes...")
             continue
         #3. If 2 or more, select the min and max distance to the pareto set
         else:
