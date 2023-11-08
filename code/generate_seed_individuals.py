@@ -12,9 +12,8 @@ from scipy import optimize
 
 from pymoo.core.problem import Problem
 
-from problems.rastrigin import Rastrigin
-from problems.rosenbrock import Rosenbrock
 
+from problems.sphere import Sphere
 
 # ====================================================================================================
 # Define hepler class and functions
@@ -187,19 +186,76 @@ random_inds_d32 = np.loadtxt(in_path+"/random_inds_d32.csv", delimiter=",", dtyp
 xl = -5
 xu = 5
 
+# dim = 4
+# generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d4)
+# generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d4)
+# dim = 8
+# generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d8)
+# generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d8)
+# dim = 16
+# generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d16)
+# generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d16)
+# dim = 32
+# generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d32)
+# generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d32)
+
+
+# ====================================================================================================
+# Also generate the seed individuals for the sphere function, which can be solved systhematically
+# ====================================================================================================
+
+def generate_sphere_individual(n_var: int, target_fitness: float, seed_quality:str, problem:Sphere, seed_inds_df=pd.DataFrame):
+    print("target", target_fitness)
+    for percentage_of_optimal_genes in [0.0, 0.25, 0.5, 0.75]:
+        number_optimal_genes = int(percentage_of_optimal_genes * n_var)
+        number_not_optimal_genes = n_var - number_optimal_genes
+
+        ind = np.zeros(n_var)
+        ind[:number_not_optimal_genes] = np.sqrt(target_fitness/number_not_optimal_genes)
+
+        dist_to_optimum = np.linalg.norm( problem._calc_pareto_set()-ind )
+        f_of_ind = problem.evaluate(np.array([ind]))[0][0]
+
+        print("real", f_of_ind, ind)
+        seed_inds_df.loc[len(seed_inds_df)+1] =list(ind) + [dist_to_optimum, "equal", percentage_of_optimal_genes, seed_quality, f_of_ind ]
+    exit()
+    return ind
+
+
+def generate_seeds_for_sphere_function(problem: Sphere, n_var: int, initial_pop: np.array):
+    seed_inds = np.zeros((18, n_var))
+
+    #set the utopia and dystopia points
+    seed_inds[0] = np.zeros(n_var)
+    seed_inds[1] = np.ones(n_var) * 5
+
+    #calculate the target fitness of the quartiles
+    initial_pop_fitness = problem.evaluate(initial_pop)
+    best = np.min(initial_pop_fitness) / 2
+    lower_quartile = np.quantile(initial_pop_fitness, 0.25)
+    median = np.median(initial_pop_fitness)
+    upper_quartile = np.quantile(initial_pop_fitness, 0.75)
+    worst = np.max(initial_pop_fitness) * 2
+
+
+    df_columns = ["gene_"+str(i) for i in range(dim)] + ["euclidean distance","close/far","% optimal genes","quality","fitness"]
+    seed_inds_df = pd.DataFrame(columns=df_columns, dtype=str)
+
+    generate_sphere_individual(n_var, best, "best", problem, seed_inds_df)
+    generate_sphere_individual(n_var, lower_quartile, "lower quartile", problem, seed_inds_df)
+    generate_sphere_individual(n_var, median, "median", problem, seed_inds_df)
+    generate_sphere_individual(n_var, upper_quartile, "upper quartile", problem, seed_inds_df)
+    generate_sphere_individual(n_var, worst, "worst", problem, seed_inds_df)
+
+    print(seed_inds_df)
+    exit()
+    seed_inds_df.to_csv("../data/seed_individuals/seed_individuals_Sphere_"+str(dim)+".csv")
+
 dim = 4
-generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d4)
-generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d4)
+generate_seeds_for_sphere_function(Sphere(n_var = dim, xl=xl, xu=xu), dim, random_inds_d4)
 dim = 8
-generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d8)
-generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d8)
+generate_seeds_for_sphere_function(Sphere(n_var = dim, xl=xl, xu=xu), dim, random_inds_d8)
 dim = 16
-generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d16)
-generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d16)
+generate_seeds_for_sphere_function(Sphere(n_var = dim, xl=xl, xu=xu), dim, random_inds_d16)
 dim = 32
-generate_seed_inds_for_problem_and_dim(Rastrigin(n_var = dim, xl=xl, xu=xu), "Rastrigin", dim, random_inds_d32)
-generate_seed_inds_for_problem_and_dim(Rosenbrock(n_var = dim, xl=xl, xu=xu), "Rosenbrock", dim, random_inds_d32)
-
-
-
-
+generate_seeds_for_sphere_function(Sphere(n_var = dim, xl=xl, xu=xu), dim, random_inds_d32)
