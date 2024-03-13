@@ -67,7 +67,7 @@ random_inds_x = [
     np.random.random(n_var),
     np.random.random(n_var),
     np.random.random(n_var),
-    np.random.random(n_var) #TODO: do I need four inds?
+    np.random.random(n_var)
     ]
 random_types = ["r1", "r2", "r3", "r4"]
 
