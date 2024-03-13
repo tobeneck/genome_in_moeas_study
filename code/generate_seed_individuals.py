@@ -54,10 +54,8 @@ def save_dataframe(seed_genomes:list, random_genomes:list, problem:Problem, prob
     #set up the dataframe:
     df_columns = ["gene_"+str(i+1) for i in range(problem.n_var)] + ["obj_"+str(i+1) for i in range(problem.n_obj)] + ["type"]
     seed_inds_df = pd.DataFrame(columns=df_columns, dtype=str)
-    print(df_columns, len(df_columns))
     #save the seed types:
     for i in range(len(seed_types)):
-        print(list(seed_genomes[i]) + list(seed_inds_f[i]) + [seed_types[i]], len(list(seed_genomes[i]) + list(seed_inds_f[i]) + [seed_types[i]]))
         seed_inds_df.loc[len(seed_inds_df)+1] = list(seed_genomes[i]) + list(seed_inds_f[i]) + [seed_types[i]]
     #save the random types:
     for i in range(len(random_types)):
