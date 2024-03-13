@@ -39,14 +39,16 @@ problems = {
     "DTLZ3" : DTLZ3(n_var = n_var, n_obj = n_obj_dtlz),
 }
 
+print(np.random.random(10))
+
 seed_ind_dfs ={
-    "MACO" : pd.DataFrame(np.zeros(n_var)).T,
-    "ZDT1" : pd.DataFrame(np.zeros(n_var)).T,
-    "ZDT2" : pd.DataFrame(np.zeros(n_var)).T,
-    "ZDT3" : pd.DataFrame(np.zeros(n_var)).T,
-    "DTLZ1" : pd.DataFrame(np.array([0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])).T,
-    "DTLZ2" : pd.DataFrame(np.array([0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])).T,
-    "DTLZ3" : pd.DataFrame(np.array([0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])).T,
+    "MACO" : pd.read_csv("../data/seed_individuals/seed_individuals_MACO.csv"),
+    "ZDT1" : pd.read_csv("../data/seed_individuals/seed_individuals_ZDT.csv"),
+    "ZDT2" : pd.read_csv("../data/seed_individuals/seed_individuals_ZDT.csv"),
+    "ZDT3" : pd.read_csv("../data/seed_individuals/seed_individuals_ZDT.csv"),
+    "DTLZ1" : pd.read_csv("../data/seed_individuals/seed_individuals_DTLZ.csv"),
+    "DTLZ2" : pd.read_csv("../data/seed_individuals/seed_individuals_DTLZ.csv"),
+    "DTLZ3" : pd.read_csv("../data/seed_individuals/seed_individuals_DTLZ.csv"),
 } 
 
 #actually run the tests:
