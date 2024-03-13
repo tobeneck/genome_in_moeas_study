@@ -1,6 +1,7 @@
 from tea_pymoo.tracing.t_mutation import T_Mutation
 from tea_pymoo.tracing.t_crossover import T_Crossover
 from tea_pymoo.callbacks.general.counting_impact_callback import Counting_Impact_Callback
+from tea_pymoo.callbacks.general.genome_callback import Genome_Callback
 from tea_pymoo.callbacks.moo.performance_indicators import Performance_Indicators_Callback
 from tea_pymoo.callbacks.moo.fitness_and_ranks_genome import Fitness_and_Ranks_Callback
 
@@ -52,85 +53,6 @@ def get_algorithm(algorithm_name, n_obj, pop_size, sampling, crossover, mutation
         )
     else:
         raise ValueError("algorithm_name not recognized")
-    
-def run_tests(
-        problems:dict,
-        output_folder:str,
-        seed_ind_dfs:dict,
-        random_populations:dict = {
-            2 : np.loadtxt("../data/initial_populations/random_pop_ds10_do2.csv", delimiter=",", dtype=float),
-            3 : np.loadtxt("../data/initial_populations/random_pop_ds10_do3.csv", delimiter=",", dtype=float),
-        },
-        crossovers:dict= {
-            "UX" : T_Crossover(crossover=UniformCrossover(), tracing_type=TracingTypes.TRACE_VECTOR),
-            "SBX" : T_Crossover(crossover=SimulatedBinaryCrossover(prob=1.0, eta=20), tracing_type=TracingTypes.TRACE_VECTOR),
-        },
-        n_gen:int=100,
-        pop_size:int=91,
-        tracing_type:TracingTypes=TracingTypes.TRACE_VECTOR,
-        algorithms=["NSGA2", "NSGA3", "MOEAD"],
-        ):
-    '''
-    TODO!
-    '''
-    t_sampling = T_Sampling(FloatRandomSampling(), tracing_type=tracing_type)
-
-    #run the tests:
-    for problem_name in problems:#iterate over the problems
-        problem= problems[problem_name]
-        for crossover_name in crossovers:#iterate over the crossovers
-            for index, seed_ind_data in seed_ind_dfs[problem_name].iterrows():#iterate over the seed individuals in this generation
-                for algorithm_name in algorithms:#iterate over the algorithms
-                    #extract the seed ind from the dataframe
-                    seed_individual = seed_ind_data[1:problem.n_var+1].to_numpy(dtype=float)#need to specify dtype, otherwise we will get an error
-                    seed_quality = seed_ind_data["quality"]
-                    seed_type = seed_ind_data["type"]
-
-                    print("processing problem:", problem_name, "with crossover:", crossover_name, "and seed individual:", seed_type, "using algorithm:", algorithm_name)
-
-                    pop_X = np.concatenate(([seed_individual], random_populations[problem.n_obj]), axis=0)
-                    pop = t_sampling.do(problem, pop_size, seeds=pop_X)
-
-                    algorithm = get_algorithm(
-                        algorithm_name=algorithm_name,
-                        n_obj=problem.n_obj,
-                        pop_size=pop_size,
-                        sampling=pop,crossover=crossovers[crossover_name],
-                        mutation=T_Mutation(mutation=PolynomialMutation(prob=1.0/problem.n_var, eta=20), tracing_type=tracing_type, accumulate_mutations=True)
-                        )
-
-                    for i in range(31):#31 re-runs as usual
-                        #set up callbacks:
-                        additional_run_info = {
-                            "run_number": i,
-                            "seed_individual": "corner",
-                            "crossover": crossover_name,
-                            "problem_name": problem_name,
-                            "algorithm_name": algorithm_name,
-                            "seed_type": seed_type,
-                            }
-                        callbacks = [
-                        Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=False, filename="counting_impact_pop_do"+str(problem.n_obj)), #I need to save separately for each number of objectives
-                        Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=True, filename="counting_impact_opt_do"+str(problem.n_obj)),
-                        Performance_Indicators_Callback(additional_run_info=additional_run_info, filename="performance_indicators_do"+str(problem.n_obj)),
-                        Fitness_and_Ranks_Callback(additional_run_info=additional_run_info, n_obj=problem.n_obj, filename="fitness_and_ranks_do"+str(problem.n_obj)),
-                        ]
-                        callback = AccumulateCallbacks(collectors=callbacks)
-
-                        #run the test
-                        res = minimize(problem,
-                                    algorithm,
-                                    ('n_gen', n_gen),
-                                    seed=i,#seed is the run number!
-                                    verbose=False,
-                                    callback=callback
-                                    )
-                        
-                        #print output:
-                        callback.finalize(output_folder)
-
-
-
 
 def run_test_combinations(
         problems:dict,
@@ -185,7 +107,7 @@ def run_test_combinations(
                         mutation=T_Mutation(mutation=PolynomialMutation(prob=1.0/problem.n_var, eta=20), tracing_type=tracing_type, accumulate_mutations=True)
                         )
 
-                    for i in range(31):#31 re-runs as usual
+                    for i in range(1):#31 re-runs as usual
                         #set up callbacks:
                         additional_run_info = {
                             "run_number": i,
@@ -200,6 +122,7 @@ def run_test_combinations(
                         Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=True, filename="counting_impact_opt_do"+str(problem.n_obj)),
                         Performance_Indicators_Callback(additional_run_info=additional_run_info, filename="performance_indicators_do"+str(problem.n_obj)),
                         Fitness_and_Ranks_Callback(additional_run_info=additional_run_info, n_obj=problem.n_obj, filename="fitness_and_ranks_do"+str(problem.n_obj)),
+                        # Genome_Callback(additional_run_info=additional_run_info, n_var=problem.n_var, filename="genome_do"+str(problem.n_obj)), this data is unnessecary atm.
                         ]
                         callback = AccumulateCallbacks(collectors=callbacks)
 
