@@ -12,7 +12,7 @@ from scipy import optimize
 
 from pymoo.core.problem import Problem
 
-from problems.MACO import MultiAgentCoordinationProblem
+from problems.MACO import MACO
 from pymoo.problems.multi.zdt import ZDT1, ZDT2, ZDT3
 from pymoo.problems.many.dtlz import DTLZ1, DTLZ2, DTLZ3
 
@@ -74,15 +74,24 @@ random_inds_x = [
 random_types = ["r1", "r2", "r3", "r4"]
 
 #MACO ============================================================================================================================================================
-MACO = MultiAgentCoordinationProblem(n_var = n_var)
-random_inds_f = [ MACO.evaluate(ind) for ind in random_inds_x ]
 MACO_inds_x = [
     np.zeros(n_var), #extreme 1
     np.linspace(0,1,n_var), #extreme 2
     np.linspace(0,0.5,n_var), #center
     ]
 MACO_seed_types = ["e1", "e2", "c"]
-save_dataframe(MACO_inds_x, random_inds_x, MACO, "MACO", MACO_seed_types, random_types)
+
+#problems
+MACO_b = MACO(n_var = n_var)
+MACO_p_10 = MACO(n_var = n_var, p=-10)
+MACO_w_shallow = MACO(n_var = n_var, wtype="shallow")
+MACO_w_steep = MACO(n_var = n_var, wtype="steep")
+
+save_dataframe(MACO_inds_x, random_inds_x, MACO_b, "MACO_b", MACO_seed_types, random_types)
+save_dataframe(MACO_inds_x, random_inds_x, MACO_p_10, "MACO_p=-10", MACO_seed_types, random_types)
+save_dataframe(MACO_inds_x, random_inds_x, MACO_w_shallow, "MACO_w=shallow", MACO_seed_types, random_types)
+save_dataframe(MACO_inds_x, random_inds_x, MACO_w_steep, "MACO_w=steep", MACO_seed_types, random_types)
+
 
 #ZDT ============================================================================================================================================================
 ZDT_e1 = np.zeros(n_var)

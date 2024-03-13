@@ -10,7 +10,7 @@ import numpy as np
 #import MACO, ZDT and DTLZ:
 from pymoo.problems.multi.zdt import ZDT1, ZDT2, ZDT3
 from pymoo.problems.many.dtlz import DTLZ1, DTLZ2, DTLZ3
-from problems.MACO import MultiAgentCoordinationProblem
+from problems.MACO import MACO
 
 from tea_pymoo.tracing.t_crossover import T_Crossover, TracingTypes
 from pymoo.operators.crossover.ux import UniformCrossover
@@ -30,7 +30,10 @@ n_var = 10
 n_obj_dtlz = 3
 
 problems = {
-    "MACO" : MultiAgentCoordinationProblem(n_var = n_var),
+    "MACO_b" : MACO(n_var = n_var),
+    "MACO_p=-10" : MACO(n_var = n_var, p=-10),
+    "MACO_w=shallow" : MACO(n_var = n_var, wtype="shallow"),
+    "MACO_w=steep" : MACO(n_var = n_var, wtype="steep"),
     "ZDT1" : ZDT1(n_var = n_var),
     "ZDT2" : ZDT2(n_var = n_var),
     "ZDT3" : ZDT3(n_var = n_var),
@@ -40,7 +43,10 @@ problems = {
 }
 
 seed_ind_dfs ={
-    "MACO" : pd.read_csv("../data/seed_individuals/seed_individuals_MACO.csv"),
+    "MACO_b" : pd.read_csv("../data/seed_individuals/seed_individuals_MACO_b.csv"),
+    "MACO_p=-10" : pd.read_csv("../data/seed_individuals/seed_individuals_MACO_p=-10.csv"),
+    "MACO_w=shallow" : pd.read_csv("../data/seed_individuals/seed_individuals_MACO_w=shallow.csv"),
+    "MACO_w=steep" : pd.read_csv("../data/seed_individuals/seed_individuals_MACO_w=steep.csv"),
     "ZDT1" : pd.read_csv("../data/seed_individuals/seed_individuals_ZDT1.csv"),
     "ZDT2" : pd.read_csv("../data/seed_individuals/seed_individuals_ZDT2.csv"),
     "ZDT3" : pd.read_csv("../data/seed_individuals/seed_individuals_ZDT3.csv"),
@@ -68,7 +74,10 @@ combinations_d3=[
     ]
 
 combinations = {
-    "MACO" : combinations_d2,
+    "MACO_b" : combinations_d2,
+    "MACO_p=-10" : combinations_d2,
+    "MACO_w=shallow" : combinations_d2,
+    "MACO_w=steep" : combinations_d2,
     "ZDT1" : combinations_d2,
     "ZDT2" : combinations_d2,
     "ZDT3" : combinations_d2,

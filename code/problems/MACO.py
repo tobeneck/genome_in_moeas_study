@@ -112,7 +112,7 @@ def get_weights(wtype, weights, N):
     raise NotImplementedError("wtype not known")
 
 
-class MultiAgentCoordinationProblem(Problem):
+class MACO(Problem): # MACO = multi-agent coordination problem
     def __init__(self, n_var=10, p=-np.inf, weights=None, classes=None, ctype=None, wtype=None):
         classes = get_classes(ctype, classes, n_var)
         weights = get_weights(wtype, weights, n_var)
@@ -133,3 +133,4 @@ class MultiAgentCoordinationProblem(Problem):
 
     def _calc_pareto_set(self, n_pareto_points=100):
         return np.array(optimal_set(dim=self.n_var, samples=n_pareto_points, weight=self.weights, classes=self.classes))
+    
