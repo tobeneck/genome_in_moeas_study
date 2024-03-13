@@ -26,7 +26,11 @@ def f2(x, p: float = None, weight=None, classes=None) -> float:
     #pairs = [min([abs(a - b) for j, b in enumerate(x) if i != j and classes[i] == classes[j]]) for i, a in enumerate(x)]
     pairs = pairs * weight
     pairs = pairs[np.isfinite(pairs)]
-    z = np.linalg.norm(pairs, p)
+    if p < 0.0 and 0.0 in pairs: #this is to avoid division by zero error. Numpy handles it correctly, but this edge-case should probably be handled somehow...
+        z = 0.0
+    else:
+        z = np.linalg.norm(pairs, p)
+            
     return float(1.0 - z)
 
 
