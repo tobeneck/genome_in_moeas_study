@@ -10,7 +10,7 @@ import numpy as np
 #import MACO, ZDT and DTLZ:
 from pymoo.problems.multi.zdt import ZDT1, ZDT2, ZDT3
 from pymoo.problems.many.dtlz import DTLZ1, DTLZ2, DTLZ3
-from problems.MACO import MACO
+from pymoo_problems.moo.maco import MACO
 
 from tea_pymoo.tracing.t_crossover import T_Crossover, TracingTypes
 from pymoo.operators.crossover.ux import UniformCrossover
