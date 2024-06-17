@@ -24,26 +24,19 @@ pop_size = 91
 n_var = 10
 
 problems = {
-    #dtlz
-    "dtlz1": DTLZ1(n_var=n_var, n_obj=3),
-    "dtlz2": DTLZ2(n_var=n_var, n_obj=3),
-    "dtlz3": DTLZ3(n_var=n_var, n_obj=3),
-
-    #zdt
-    "zdt1": ZDT1(n_var=n_var),
-    "zdt2": ZDT2(n_var=n_var),
-    "zdt3": ZDT3(n_var=n_var),
-
-    #uf
-    "uf1": UF1(n_var=n_var),
-    "uf2": UF2(n_var=n_var),
-    "uf3": UF3(n_var=n_var),
-
-    #maco
-    "maco_basic": MACO(n_var=n_var, p=-np.inf, weights=None, classes=None, ctype=None, wtype=None),
-    "maco_p-norm": MACO(n_var=n_var, p=2, weights=None, classes=None, ctype=None, wtype=None),
-    "maco_weights": MACO(n_var=n_var, p=-np.inf, weights=None, classes=None, ctype=None, wtype="steep"),
-    "maco_classes": MACO(n_var=n_var, p=-np.inf, weights=None, classes=None, ctype="half", wtype=None),
+    "MACO_b" : MACO(n_var = n_var),
+    "MACO_p=-10" : MACO(n_var = n_var, p=-10),
+    "MACO_w=shallow" : MACO(n_var = n_var, wtype="shallow"),
+    "MACO_w=steep" : MACO(n_var = n_var, wtype="steep"),
+    "UF1" : UF1(n_var = n_var),
+    "UF2" : UF2(n_var = n_var),
+    "UF3" : UF3(n_var = n_var),
+    "ZDT1" : ZDT1(n_var = n_var),
+    "ZDT2" : ZDT2(n_var = n_var),
+    "ZDT3" : ZDT3(n_var = n_var),
+    "DTLZ1" : DTLZ1(n_var = n_var, n_obj = 3),
+    "DTLZ2" : DTLZ2(n_var = n_var, n_obj = 3),
+    "DTLZ3" : DTLZ3(n_var = n_var, n_obj = 3),
 }
 
 '''
@@ -52,6 +45,12 @@ generate one initial population for each problem separately because of bounds.
 for problem_name in problems.keys():
    problem = problems[problem_name]
    sampling = FloatRandomSampling()
-   X = sampling._do(problem, pop_size)
+
+   n_obj = problem.n_obj
+   if n_obj == 2:
+      random_pop_size = pop_size - 3 #for the three seeds
+   if n_obj == 3:
+      random_pop_size = pop_size - 4 #for the four seeds<
+   X = sampling._do(problem, random_pop_size)
    print(X)
-   np.savetxt(out_path+"/random_pop_"+problem_name+"_ds"+str(problem.n_var)+"_do"+str(problem.n_obj)+".csv", X, delimiter=",")
+   np.savetxt(out_path+"/random_pop_"+problem_name+"_ds"+str(problem.n_var)+"_do"+str(n_obj)+".csv", X, delimiter=",")

@@ -10,7 +10,6 @@ from tea_pymoo.tracing.tracing_types import TracingTypes
 from tea_pymoo.tracing.t_sampling import T_Sampling
 
 from pymoo.optimize import minimize
-from pymoo.algorithms.soo.nonconvex.ga import GA
 from pymoo.operators.mutation.pm import PolynomialMutation
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.operators.crossover.ux import UniformCrossover
@@ -54,14 +53,19 @@ def get_algorithm(algorithm_name, n_obj, pop_size, sampling, crossover, mutation
     else:
         raise ValueError("algorithm_name not recognized")
 
+def get_reference_point(n_obj:int):
+    if n_obj == 2:
+        return [1.1, 1.1]
+    elif n_obj == 3:
+        return [1.1, 1.1, 1.1]
+    else:
+        raise ValueError("n_obj not recognized")
+    
 def run_test_combinations(
         problems:dict,
         output_folder:str,
         seed_ind_dfs:dict,
-        random_populations:dict = {
-            2 : np.loadtxt("../data/initial_populations/random_pop_ds10_do2.csv", delimiter=",", dtype=float),
-            3 : np.loadtxt("../data/initial_populations/random_pop_ds10_do3.csv", delimiter=",", dtype=float),
-        },
+        random_populations:dict,
         crossovers:dict= {
             "UX" : T_Crossover(crossover=UniformCrossover(), tracing_type=TracingTypes.TRACE_VECTOR),
             "SBX" : T_Crossover(crossover=SimulatedBinaryCrossover(prob=1.0, eta=20), tracing_type=TracingTypes.TRACE_VECTOR),
@@ -96,7 +100,7 @@ def run_test_combinations(
 
                     print("processing problem:", problem_name, "with crossover:", crossover_name, "and seed individual:", seed_type, "using algorithm:", algorithm_name)
 
-                    pop_X = np.concatenate((seed_inds, random_populations[problem.n_obj]), axis=0)
+                    pop_X = np.concatenate((seed_inds, random_populations[problem_name]), axis=0)
                     pop = t_sampling.do(problem, pop_size, seeds=pop_X)
 
                     algorithm = get_algorithm(
@@ -107,7 +111,7 @@ def run_test_combinations(
                         mutation=T_Mutation(mutation=PolynomialMutation(prob=1.0/problem.n_var, eta=20), tracing_type=tracing_type, accumulate_mutations=True)
                         )
 
-                    for i in range(1):#31 re-runs as usual
+                    for i in range(31):#31 re-runs as usual
                         #set up callbacks:
                         additional_run_info = {
                             "run_number": i,
