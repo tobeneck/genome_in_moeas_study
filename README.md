@@ -20,24 +20,45 @@ source venv/bin/activate
 pip3 install requirements.txt
 ```
 
-Finally, for the heritage tracking, for the heritage tracking using the T-EA, it is required to initialize the sub-repositors.
+Finally, two sub-directories are needed for the test problems and the heritage tracking. They can be initalized as follows:
 ```bash
 git clone https://github.com/tobeneck/crossover_study.git
 cd crossover_study
 git submodule init
 git submuodule update
+cd ../pymoo_problems
+git submodule init
+git submuodule update
 ```
+
+For more information on the heritage tracking process of the traceable evolutionary algorithm (T-EA) you can refer to [this paper](https://ieeexplore.ieee.org/document/9504916), the implementation can be found in [this git repository](https://github.com/tobeneck/tea_pymoo).
+
+The repository containing the problem implementations outside of pymoo can be found [here](https://github.com/tobeneck/pymoo_problems).
+
 
 ## Generating the Test Data
 
-As mentioned, the test data is already available in the *data/sphere_function_data_out* folder.
-This test data is generated using the *code/benchmark_sphere.py* script:
+Generating the test data is done in a few separate steps. The data will always be saved in the *data* folder.
+
+1. Generating the initial populations and seed individuals:
 ```bash
 cd code
-python3 benchmark_sphere.py
+python3 generate_initial_pop.py
+python3 generate_seed_individuals.py
 ```
 
-The output of the test data woll be saved to the *data* folder. It can be evaluated using the *code/eval_sphree.ipynb* notebook.
+2. Run the actual tests:
+```bash
+python3 e_and_c_benchmark.py
+```
+
+3. Calculate the hypervolume performance indicator:
+```bash
+python3 calc_HV.py
+```
+
+4. Evaluate the tests with *e_and_c_evaluation.ipynb*.
+
 
 ## Citation
 
