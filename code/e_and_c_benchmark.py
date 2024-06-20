@@ -7,15 +7,13 @@ import os
 import pandas as pd
 import numpy as np
 
-from pymoo_problems.moo.maco import MACO
-from pymoo_problems.moo.uf import UF1, UF2, UF3
-from pymoo_problems.moo.zdt import ZDT1, ZDT2, ZDT3
-from pymoo_problems.moo.dtlz import DTLZ1, DTLZ2, DTLZ3
-
 from tea_pymoo.tracing.t_crossover import T_Crossover, TracingTypes
 from pymoo.operators.crossover.ux import UniformCrossover
 
 from benchmark_helper import run_test_combinations
+
+from test_setup import problems, n_var
+
 
 #check if the output path exists
 out_path = "../data/e_and_c_benchmark"
@@ -23,28 +21,6 @@ if not os.path.exists(out_path):
     os.makedirs(out_path)
 
 #set up the sessecary parameters
-xu = 1.0
-xl = 0.0
-
-n_var = 10
-n_obj_dtlz = 3
-
-problems = {
-    "MACO_b" : MACO(n_var = n_var),
-    "MACO_p=-10" : MACO(n_var = n_var, p=-10),
-    "MACO_w=shallow" : MACO(n_var = n_var, wtype="shallow"),
-    "MACO_w=steep" : MACO(n_var = n_var, wtype="steep"),
-    "UF1" : UF1(n_var = n_var),
-    "UF2" : UF2(n_var = n_var),
-    "UF3" : UF3(n_var = n_var),
-    "ZDT1" : ZDT1(n_var = n_var),
-    "ZDT2" : ZDT2(n_var = n_var),
-    "ZDT3" : ZDT3(n_var = n_var),
-    "DTLZ1" : DTLZ1(n_var = n_var, n_obj = n_obj_dtlz),
-    "DTLZ2" : DTLZ2(n_var = n_var, n_obj = n_obj_dtlz),
-    "DTLZ3" : DTLZ3(n_var = n_var, n_obj = n_obj_dtlz),
-}
-
 seed_ind_dfs ={
     "MACO_b" : pd.read_csv("../data/seed_individuals/seed_individuals_MACO_b.csv"),
     "MACO_p=-10" : pd.read_csv("../data/seed_individuals/seed_individuals_MACO_p=-10.csv"),
