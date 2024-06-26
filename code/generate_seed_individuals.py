@@ -106,50 +106,26 @@ def get_closest_point_to_line(point_set, reference_vector, line_origin):
 np.random.seed(1)
 
 #generate three random inds #TODO: this is wrong! Random inds need to also be generated within the bounds of the problem, so for each problem individually!
-random_inds_x = [
-    np.random.random(n_var),
-    np.random.random(n_var),
-    np.random.random(n_var),
-    np.random.random(n_var)
-    ]
-random_types = ["r1", "r2", "r3", "r4"]
-
-
-
-
-
+random_seed_types = ["r1", "r2", "r3", "r4"]
 d2_seed_types = ["e1", "e2", "c"]
 d3_seed_types = ["e1", "e2", "e3", "c"]
 
 sampler = FloatRandomSampling()
 
 # =============================================================================
-# For MACO we can generate exact individuals (equivalent to reference vectors, just a bit more exact)
-# =============================================================================
-for problem_name in problems.keys():
-    if "MACO" not in problem_name: #just do this for the MACO problems
-        continue
-
-    problem = problems[problem_name]
-    seed_inds_X = problem._calc_pareto_set(n_pareto_points=3)
-    random_inds_x = sampler._do(problem=problems[problem_name], n_samples=4)
-    save_dataframe(seed_inds_X, random_inds_x, problem, problem_name, d2_seed_types, random_types)
-
-
-# =============================================================================
-# Generate the rest with reference vectors
+# Generate the seed individuals with the reference vectors
 # =============================================================================
 
 
 for problem_name in problems.keys():
-    if "MACO" in problem_name: #no need to re-generate MACO
-        continue
+    # if "MACO" in problem_name: #no need to re-generate MACO
+    #     continue
     
     problem = problems[problem_name]
-    pareto_set_X = problem._calc_pareto_set(n_pareto_points=1000)
+    pareto_set_X = problem._calc_pareto_set(n_pareto_points=1005) #5 as it is not even and still meets the ZDT3 constraint
     pareto_set_F = problem.evaluate(pareto_set_X)
 
-    upper_bounds = pareto_set_F.max(axis=0) #TODO: fl and fu, not xl and xu!
+    upper_bounds = pareto_set_F.max(axis=0)
     lower_bounds = pareto_set_F.min(axis=0)
 
     random_inds_x = sampler._do(problem=problem, n_samples=4)
@@ -165,7 +141,7 @@ for problem_name in problems.keys():
             pareto_set_X[ get_closest_point_to_line(pareto_set_F, reference_vectors_d2[1], line_origin=lower_bounds)[0] ], #e2
             pareto_set_X[ get_closest_point_to_line(pareto_set_F, reference_vectors_d2[2], line_origin=lower_bounds)[0] ] #c
         ]
-        save_dataframe(seed_inds_X, random_inds_x, problem, problem_name, d2_seed_types, random_types)
+        save_dataframe(seed_inds_X, random_inds_x, problem, problem_name, d2_seed_types, random_seed_types)
     elif problem.n_obj == 3:
         reference_vectors_d3 = [
             [lower_bounds[0], lower_bounds[1], upper_bounds[2]],
@@ -179,4 +155,4 @@ for problem_name in problems.keys():
             pareto_set_X[ get_closest_point_to_line(pareto_set_F, reference_vectors_d3[2], line_origin=lower_bounds)[0] ], #e3
             pareto_set_X[ get_closest_point_to_line(pareto_set_F, reference_vectors_d3[3], line_origin=lower_bounds)[0] ] #c
         ]
-        save_dataframe(seed_inds_X, random_inds_x, problem, problem_name, d3_seed_types, random_types)
+        save_dataframe(seed_inds_X, random_inds_x, problem, problem_name, d3_seed_types, random_seed_types)
