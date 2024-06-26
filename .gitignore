@@ -164,4 +164,9 @@ code/test_out/*
 #ignore the csv data
 ***.csv
 
+#ignore the generated graphics (for now)
+***.pdf
+***.png
+***.jpg
+
 **DS_Store
