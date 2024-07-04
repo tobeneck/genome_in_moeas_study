@@ -1,7 +1,7 @@
 #this file contains the general definition of the problems and algorithms used throughout the experiments to avoid dupilication mistakes.
 from pymoo_problems.moo.maco import MACO
-from pymoo_problems.moo.uf import UF1, UF2, UF3
-from pymoo_problems.moo.zdt import ZDT1, ZDT2, ZDT3
+from pymoo_problems.moo.uf import UF1, UF2, UF3, UF8, UF9, UF10
+from pymoo_problems.moo.zdt import ZDT1, ZDT2, ZDT3, ZDT4, ZDT6
 from pymoo_problems.moo.dtlz import DTLZ1, DTLZ2, DTLZ3
 
 
@@ -17,9 +17,14 @@ problems = {
     "UF1" : UF1(n_var = n_var),
     "UF2" : UF2(n_var = n_var),
     "UF3" : UF3(n_var = n_var),
+    "UF8" : UF8(n_var = n_var),
+    "UF9" : UF9(n_var = n_var),
+    "UF10" : UF10(n_var = n_var),
     "ZDT1" : ZDT1(n_var = n_var),
     "ZDT2" : ZDT2(n_var = n_var),
     "ZDT3" : ZDT3(n_var = n_var),
+    "ZDT4" : ZDT4(n_var = n_var),
+    "ZDT6" : ZDT6(n_var = n_var),
     "DTLZ1" : DTLZ1(n_var = n_var, n_obj = 3),
     "DTLZ2" : DTLZ2(n_var = n_var, n_obj = 3),
     "DTLZ3" : DTLZ3(n_var = n_var, n_obj = 3),
