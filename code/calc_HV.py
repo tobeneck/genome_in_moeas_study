@@ -73,9 +73,9 @@ for index, row in filtered_performance_indicators_d3.iterrows():
     first_gen_hv = HV(ref_point=ref_points_first_gen[row.problem_name])
     performance_indicators_d3.at[index, "hv_ref1"] = first_gen_hv(pop)
     final_gen_hv = HV(ref_point=ref_points_final_gen[row.problem_name])
-    performance_indicators_d3.at[index, "hv_ref2"] = first_gen_hv(pop)
+    performance_indicators_d3.at[index, "hv_ref2"] = final_gen_hv(pop)
 
-    print("Computed row", index, "of", len(performance_indicators_d3), "d3", row.problem_name, row.seed_type, row.algorithm_name, row.run_number, row.crossover, row.generation, performance_indicators_d3.at[index, "hv_ref1"], performance_indicators_d3.at[index, "hv_ref1"])
+    print("Computed row", index, "of", len(performance_indicators_d3), "d3", row.problem_name, row.seed_type, row.algorithm_name, row.run_number, row.crossover, row.generation, performance_indicators_d3.at[index, "hv_ref1"], performance_indicators_d3.at[index, "hv_ref2"])
 
 performance_indicators_d3.to_csv("../data/e_and_c_benchmark/performance_indicators_do3_plus_HV.csv", index=False)
 
@@ -107,8 +107,8 @@ for index, row in filtered_performance_indicators_d2.iterrows():
     first_gen_hv = HV(ref_point=ref_points_first_gen[row.problem_name])
     performance_indicators_d2.at[index, "hv_ref1"] = first_gen_hv(pop)
     final_gen_hv = HV(ref_point=ref_points_final_gen[row.problem_name])
-    performance_indicators_d2.at[index, "hv_ref2"] = first_gen_hv(pop)
+    performance_indicators_d2.at[index, "hv_ref2"] = final_gen_hv(pop)
 
-    print("Computed row", index, "of", len(performance_indicators_d2), "d2", row.problem_name, row.seed_type, row.algorithm_name, row.run_number, row.crossover, row.generation, performance_indicators_d2.at[index, "hv_ref1"], performance_indicators_d2.at[index, "hv_ref1"])
+    print("Computed row", index, "of", len(performance_indicators_d2), "d2", row.problem_name, row.seed_type, row.algorithm_name, row.run_number, row.crossover, row.generation, performance_indicators_d2.at[index, "hv_ref1"], performance_indicators_d2.at[index, "hv_ref2"])
 
 performance_indicators_d2.to_csv("../data/e_and_c_benchmark/performance_indicators_do2_plus_HV.csv", index=False)
