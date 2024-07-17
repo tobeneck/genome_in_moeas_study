@@ -115,14 +115,13 @@ def run_test_combinations(
                         #set up callbacks:
                         additional_run_info = {
                             "run_number": i,
-                            "seed_individual": "corner",
                             "crossover": crossover_name,
                             "problem_name": problem_name,
                             "algorithm_name": algorithm_name,
                             "seed_type": seed_type,
                             }
                         callbacks = [
-                        Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=False, filename="counting_impact_pop_do"+str(problem.n_obj)), #I need to save separately for each number of objectives
+                        # Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=False, filename="counting_impact_pop_do"+str(problem.n_obj)), #I need to save separately for each number of objectives
                         Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=True, filename="counting_impact_opt_do"+str(problem.n_obj)),
                         Performance_Indicators_Callback(additional_run_info=additional_run_info, filename="performance_indicators_do"+str(problem.n_obj)),
                         Fitness_and_Ranks_Callback(additional_run_info=additional_run_info, n_obj=problem.n_obj, filename="fitness_and_ranks_do"+str(problem.n_obj)),
