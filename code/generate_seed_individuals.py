@@ -9,7 +9,7 @@ import pandas as pd
 from pymoo.core.problem import Problem
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 
-from test_setup import problems, n_var
+from test_setup import problems
 
 #check if the output path exists
 out_path = "../data/seed_individuals"
