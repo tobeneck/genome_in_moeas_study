@@ -4,9 +4,11 @@ import pandas as pd
 import numpy as np
 from pymoo.indicators.hv import HV
 
+from test_setup import problems
+
 def get_2d_ref_point(df, H=91):
     '''
-    Get the ideal and nadir points for a 2D problem. Dataframe needs to be filtered already.
+    Get the nadir point for the result of a bi-objective test configuration. Dataframe needs to be filtered already.
     
     Parameters:
     -----------
@@ -21,7 +23,7 @@ def get_2d_ref_point(df, H=91):
 
 def get_3d_ref_point(df, H=91):
     '''
-    Get the ideal and nadir points for a 3D problem. Dataframe needs to be filtered already.
+    Get the nadir point for the result of a test configuration with three objectives. Dataframe needs to be filtered already.
     
     Parameters:
     -----------
@@ -34,7 +36,20 @@ def get_3d_ref_point(df, H=91):
     ref_point =[value + 1/H for value in ref_point]
     return ref_point
 
-
+def get_pf_reference_point(problem, H=91):
+    '''
+    Get the nadir point for the pareto front of a test problem. Dataframe needs to be filtered already.
+    
+    Parameters:
+    -----------
+    problem: pymoo.core.problem
+        The problem to calculate the pareto front for.
+    H : int
+        The pop size / number of reference directories used.
+    '''
+    ref_point = problem._calc_pareto_front().max(axis=0)
+    ref_point =[value + 1/H for value in ref_point]
+    return ref_point
 
 
 #only compute HV for a few rows, otherwise it will take forever
@@ -49,8 +64,9 @@ gens = [
 ### the 3D problems
 ### =============================================================================
 performance_indicators_d3 =  pd.read_csv("../data/e_and_c_benchmark/performance_indicators_do3.csv")
-performance_indicators_d3["hv_ref1"] = np.nan
-performance_indicators_d3["hv_ref2"] = np.nan
+performance_indicators_d3["hv_ref1"] = np.nan #nadir point of first generation
+performance_indicators_d3["hv_ref2"] = np.nan #nadir point of final generation
+performance_indicators_d3["hv_ref3"] = np.nan #nadir point of pareto front
 
 fitness_d3 = pd.read_csv("../data/e_and_c_benchmark/fitness_and_ranks_do3.csv")
 fitness_d3 = fitness_d3[fitness_d3.generation.isin(gens)]
@@ -58,8 +74,10 @@ fitness_d3 = fitness_d3[fitness_d3.generation.isin(gens)]
 #compute the ref points for each problem in a dict:
 ref_points_first_gen = dict()
 ref_points_final_gen = dict()
+ref_points_PFs = dict()
 for problem_name in fitness_d3.problem_name.unique():
     problem_df = fitness_d3[fitness_d3.problem_name == problem_name]
+    ref_points_PFs[problem_name] = get_pf_reference_point(problems[problem_name])
     ref_points_first_gen[problem_name] = get_3d_ref_point(problem_df[problem_df.generation == first_gen])
     ref_points_final_gen[problem_name] = get_3d_ref_point(problem_df[problem_df.generation == final_gen])
 
@@ -74,8 +92,10 @@ for index, row in filtered_performance_indicators_d3.iterrows():
     performance_indicators_d3.at[index, "hv_ref1"] = first_gen_hv(pop)
     final_gen_hv = HV(ref_point=ref_points_final_gen[row.problem_name])
     performance_indicators_d3.at[index, "hv_ref2"] = final_gen_hv(pop)
+    pf_hv = HV(ref_point=ref_points_PFs[row.problem_name])
+    performance_indicators_d3.at[index, "hv_ref3"] = pf_hv(pop)
 
-    print("Computed row", index, "of", len(performance_indicators_d3), "d3", row.problem_name, row.seed_type, row.algorithm_name, row.run_number, row.crossover, row.generation, performance_indicators_d3.at[index, "hv_ref1"], performance_indicators_d3.at[index, "hv_ref2"])
+    print("Computed row", index, "of", len(performance_indicators_d3), "d_o = 3", row.problem_name, row.seed_type, row.algorithm_name, row.run_number, row.crossover, row.generation, performance_indicators_d3.at[index, "hv_ref1"], performance_indicators_d3.at[index, "hv_ref2"], performance_indicators_d3.at[index, "hv_ref3"])
 
 performance_indicators_d3.to_csv("../data/e_and_c_benchmark/performance_indicators_do3_plus_HV.csv", index=False)
 
@@ -83,8 +103,9 @@ performance_indicators_d3.to_csv("../data/e_and_c_benchmark/performance_indicato
 ### the 2D problems
 ### =============================================================================
 performance_indicators_d2 =  pd.read_csv("../data/e_and_c_benchmark/performance_indicators_do2.csv")
-performance_indicators_d2["hv_ref1"] = np.nan
-performance_indicators_d2["hv_ref2"] = np.nan
+performance_indicators_d2["hv_ref1"] = np.nan #nadir point of first generation
+performance_indicators_d2["hv_ref2"] = np.nan #nadir point of final generation
+performance_indicators_d2["hv_ref3"] = np.nan #nadir point of pareto front
 
 fitness_d2 = pd.read_csv("../data/e_and_c_benchmark/fitness_and_ranks_do2.csv")
 fitness_d2 = fitness_d2[fitness_d2.generation.isin(gens)]
@@ -92,10 +113,12 @@ fitness_d2 = fitness_d2[fitness_d2.generation.isin(gens)]
 #compute the ref points for each problem in a dict:
 ref_points_first_gen = dict()
 ref_points_final_gen = dict()
+ref_points_PFs = dict()
 for problem_name in fitness_d2.problem_name.unique():
     problem_df = fitness_d2[fitness_d2.problem_name == problem_name]
     ref_points_first_gen[problem_name] = get_2d_ref_point(problem_df[problem_df.generation == first_gen])
     ref_points_final_gen[problem_name] = get_2d_ref_point(problem_df[problem_df.generation == final_gen])
+    ref_points_PFs[problem_name] = get_pf_reference_point(problems[problem_name])
 
 #filter performance indicator df for specified generations:
 filtered_performance_indicators_d2 = performance_indicators_d2[performance_indicators_d2.generation.isin(gens)]
@@ -108,7 +131,9 @@ for index, row in filtered_performance_indicators_d2.iterrows():
     performance_indicators_d2.at[index, "hv_ref1"] = first_gen_hv(pop)
     final_gen_hv = HV(ref_point=ref_points_final_gen[row.problem_name])
     performance_indicators_d2.at[index, "hv_ref2"] = final_gen_hv(pop)
+    pf_hv = HV(ref_point=ref_points_PFs[row.problem_name])
+    performance_indicators_d2.at[index, "hv_ref3"] = pf_hv(pop)
 
-    print("Computed row", index, "of", len(performance_indicators_d2), "d2", row.problem_name, row.seed_type, row.algorithm_name, row.run_number, row.crossover, row.generation, performance_indicators_d2.at[index, "hv_ref1"], performance_indicators_d2.at[index, "hv_ref2"])
+    print("Computed row", index, "of", len(performance_indicators_d2), "d_o = 2", row.problem_name, row.seed_type, row.algorithm_name, row.run_number, row.crossover, row.generation, performance_indicators_d2.at[index, "hv_ref1"], performance_indicators_d2.at[index, "hv_ref2"], performance_indicators_d2.at[index, "hv_ref3"])
 
 performance_indicators_d2.to_csv("../data/e_and_c_benchmark/performance_indicators_do2_plus_HV.csv", index=False)
