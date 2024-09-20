@@ -1,6 +1,7 @@
 from tea_pymoo.tracing.t_mutation import T_Mutation
 from tea_pymoo.tracing.t_crossover import T_Crossover
-from tea_pymoo.callbacks.general.counting_impact_callback import Counting_Impact_Callback
+from tea_pymoo.callbacks.general.counting_impact_pop_callback import Counting_Impact_Pop_Callback
+from tea_pymoo.callbacks.general.counting_impact_inds_callback import Counting_Impact_Inds_Callback
 from tea_pymoo.callbacks.general.genome_callback import Genome_Callback
 from tea_pymoo.callbacks.moo.performance_indicators import Performance_Indicators_Callback
 from tea_pymoo.callbacks.moo.fitness_and_ranks_genome import Fitness_and_Ranks_Callback
@@ -20,6 +21,8 @@ from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.moead import MOEAD
 
 from pymoo.util.ref_dirs import get_reference_directions
+
+from datetime import datetime
 
 import numpy as np
 
@@ -52,14 +55,6 @@ def get_algorithm(algorithm_name, n_obj, pop_size, sampling, crossover, mutation
         )
     else:
         raise ValueError("algorithm_name not recognized")
-
-def get_reference_point(n_obj:int):
-    if n_obj == 2:
-        return [1.1, 1.1]
-    elif n_obj == 3:
-        return [1.1, 1.1, 1.1]
-    else:
-        raise ValueError("n_obj not recognized")
     
 def run_test_combinations(
         problems:dict,
@@ -76,9 +71,7 @@ def run_test_combinations(
         algorithms=["NSGA2", "NSGA3", "MOEAD"],
         combinations=dict(),
         ):
-    '''
-    TODO!
-    '''
+    start_time=datetime.now()
     t_sampling = T_Sampling(FloatRandomSampling(), tracing_type=tracing_type)
 
     #run the tests:
@@ -98,7 +91,8 @@ def run_test_combinations(
                     if seed_type == "":
                         seed_type = "r"
 
-                    print("processing problem:", problem_name, "with crossover:", crossover_name, "and seed individual:", seed_type, "using algorithm:", algorithm_name)
+                    elapsed_time = datetime.now()-start_time
+                    print("processing problem", problem_name, "with crossover", crossover_name, "and seed individual(s)", seed_type, "using the algorithm", algorithm_name, "and current runtime of", elapsed_time.days,"d", elapsed_time.seconds // 3600, "h", elapsed_time.seconds // 60 % 60, "m",  elapsed_time.seconds % 60, "s")
 
                     pop_X = np.concatenate((seed_inds, random_populations[problem_name]), axis=0)
                     pop = t_sampling.do(problem, pop_size, seeds=pop_X)
@@ -121,8 +115,10 @@ def run_test_combinations(
                             "seed_type": seed_type,
                             }
                         callbacks = [
-                        # Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=False, filename="counting_impact_pop_do"+str(problem.n_obj)), #I need to save separately for each number of objectives
-                        Counting_Impact_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=True, filename="counting_impact_opt_do"+str(problem.n_obj)),
+                        Counting_Impact_Pop_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=False, filename="counting_impact_pop_do"+str(problem.n_obj)), #I need to save separately for each number of objectives
+                        Counting_Impact_Pop_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=True, filename="counting_impact_pop_nds_do"+str(problem.n_obj)),
+                        #Counting_Impact_Inds_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=False, filename="counting_impact_inds_do"+str(problem.n_obj)), #I need to save separately for each number of objectives
+                        Counting_Impact_Inds_Callback(additional_run_info = additional_run_info, initial_popsize = pop_size, tracing_type=tracing_type, optimal_inds_only=True, filename="counting_impact_inds_nds_do"+str(problem.n_obj)),
                         Performance_Indicators_Callback(additional_run_info=additional_run_info, filename="performance_indicators_do"+str(problem.n_obj)),
                         Fitness_and_Ranks_Callback(additional_run_info=additional_run_info, n_obj=problem.n_obj, filename="fitness_and_ranks_do"+str(problem.n_obj)),
                         # Genome_Callback(additional_run_info=additional_run_info, n_var=problem.n_var, filename="genome_do"+str(problem.n_obj)), this data is unnessecary atm.
@@ -140,3 +136,6 @@ def run_test_combinations(
                         
                         #print output:
                         callback.finalize(output_folder)
+    end_time=datetime.now()
+    elapsed = end_time - start_time
+    print("Took",elapsed.days, "d", elapsed.seconds // 3600, "h", elapsed.seconds // 60 % 60, "m", elapsed.seconds % 60, "s")
