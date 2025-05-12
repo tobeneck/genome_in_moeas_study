@@ -37,8 +37,8 @@ d3_fitness_df.to_csv("../data/e_and_c_benchmark/fitness_and_ranks_do3_gen100.csv
 #performance data d2
 print("processing performance_indicators_do2_plus_HV")
 d2_performance_df = pd.read_csv("../data/e_and_c_benchmark/performance_indicators_do2_plus_HV.csv")
-d2_fitness_df = d2_fitness_df[d2_fitness_df.generation==max_gen]
-d2_fitness_df.to_csv("../data/e_and_c_benchmark/performance_indicators_do2_plus_HV_gen100.csv.tar.gz", index=False)
+d2_performance_df = d2_performance_df[d2_performance_df.generation==max_gen]
+d2_performance_df.to_csv("../data/e_and_c_benchmark/performance_indicators_do2_plus_HV_gen100.csv.tar.gz", index=False)
 
 #performance data d3
 print("processing performance_indicators_do3_plus_HV")
