@@ -165,7 +165,7 @@ code/test_out/*
 ***.csv
 
 #ignore the generated graphics (for now)
-***.pdf
+#***.pdf
 ***.png
 ***.jpg
 
