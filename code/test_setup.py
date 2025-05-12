@@ -29,3 +29,5 @@ problems = {
     "DTLZ2" : DTLZ2(n_var = 10, n_obj = 3),
     "DTLZ3" : DTLZ3(n_var = 10, n_obj = 3),
 }
+
+max_gen = 100

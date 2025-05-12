@@ -12,7 +12,7 @@ from pymoo.operators.crossover.ux import UniformCrossover
 
 from benchmark_helper import run_test_combinations
 
-from test_setup import problems
+from test_setup import problems, max_gen
 
 
 #check if the output path exists
@@ -68,5 +68,6 @@ run_test_combinations(
     crossovers= {
     "UX" : T_Crossover(crossover=UniformCrossover(), tracing_type=TracingTypes.TRACE_VECTOR),
     },
-    combinations=combinations
+    combinations=combinations,
+    n_gen=max_gen,
 )
