@@ -1,6 +1,7 @@
 # Code for "Tracing Genome Influence in Multi-Objective Evolutionary Algorithms"
 
 This repository contains the code for my paper for the GECCO 2025 Workshop [Analysing algorithmic behaviour of optimisation heuristics](https://gecco-2025.sigevo.org/Workshop?itemId=2359) titled "[Tracing Genome Influence in Multi-Objective Evolutionary Algorithms](https://doi.org/10.1145/3712255.3734275)". This repository contains the code to generate and evaluate the test data.
+This is also the basis for Chapter 11 of my dissertation. Check it out, if you are interested in the topic.
 
 
 ## Folder Structure
@@ -45,7 +46,7 @@ The repository containing the problem implementations outside of pymoo can be fo
 
 ## Generating the Test Data
 
-Generating the test data is done in a few separate steps. The data will always be saved in the *data* folder. A filtered version of the data used for evaluation is provided as zip archives. If you wand to evaluate the full data, you need to generate it yourself the following way:
+Generating the test data is done in a few separate steps. The data will always be saved in the *data* folder. A filtered version of the data used for evaluation is provided as zip archives. If you want to evaluate the full data, you need to generate it yourself the following way:
 
 1. Generating the initial populations and seed individuals:
 ```bash
@@ -75,8 +76,26 @@ python3 filter_data.py
 - *eval_genome_range.ipynb* - visualized the variable ranges of the genome for the MOPs used in the Paper.
 - *eval_trace_data.ipynb* - contains all visualizations done for the trace data of the t-ea.
 - *eval_performance.ipynb* - contains all visualizations fo the performance data.
-Currently the notebooks evaluate the provided data. Change this if you wand to use the scripts on your own data.
+
+Currently, the notebooks evaluate the provided data. Change this if you want to use the scripts on your own data.
 
 ## Citation
 
-Concider citing the paper on this work if you use code from this repository: [https://doi.org/10.1145/3712255.3734275](https://doi.org/10.1145/3712255.3734275)
+Consider citing the paper on this work if you use code from this repository:
+
+T. Benecke and S. Mostaghim, “Tracing Genome Influence in Multi-Objective Evolutionary Algorithms,” in Proceedings of the Genetic and Evolutionary Computation Conference Companion, in GECCO ’25 Companion. New York, NY, USA: Association for Computing Machinery, Aug. 2025, pp. 1807–1815. [https://doi.org/10.1145/3712255.3734275](https://doi.org/10.1145/3712255.3734275).
+
+```bibtex
+@inproceedings{beneckeTracingGenomeInfluence2025,
+    series = {{GECCO} '25 {Companion}},
+    title = {Tracing {Genome} {Influence} in {Multi}-{Objective} {Evolutionary} {Algorithms}},
+    doi = {10.1145/3712255.3734275},
+    booktitle = {Proceedings of the {Genetic} and {Evolutionary} {Computation} {Conference} {Companion}},
+    publisher = {Association for Computing Machinery},
+    author = {Benecke, Tobias and Mostaghim, Sanaz},
+    month = aug,
+    year = {2025},
+    keywords = {multi-objective, population dynamics, my work, gene level, NSGA-II, genetic algorithm (GA), MOEA/D, my\_work},
+    pages = {1807--1815},
+}
+```
